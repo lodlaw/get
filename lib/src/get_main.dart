@@ -46,7 +46,7 @@ class Get {
   static bool _defaultPopGesture = GetPlatform.isIOS;
   static bool _defaultOpaqueRoute = true;
   static Transition _defaultTransition =
-      (GetPlatform.isIOS ? Transition.cupertino : Transition.fade);
+  (GetPlatform.isIOS ? Transition.cupertino : Transition.fade);
   static Duration _defaultDurationTransition = Duration(milliseconds: 400);
   static bool _defaultGlobalState = true;
   static RouteSettings _settings;
@@ -56,10 +56,10 @@ class Get {
   /// of rebuilding every app after a route, use opaque = true as the parameter.
   static Future<T> to<T>(Widget page,
       {bool opaque,
-      Transition transition,
-      Duration duration,
-      int id,
-      bool popGesture}) {
+        Transition transition,
+        Duration duration,
+        int id,
+        bool popGesture}) {
     return global(id).currentState.push(GetRoute(
         opaque: opaque ?? true,
         page: page,
@@ -158,10 +158,10 @@ class Get {
   /// of rebuilding every app after a route, use opaque = true as the parameter.
   static Future<T> off<T>(Widget page,
       {bool opaque = false,
-      Transition transition,
-      bool popGesture,
-      int id,
-      Duration duration}) {
+        Transition transition,
+        bool popGesture,
+        int id,
+        Duration duration}) {
     return global(id).currentState.pushReplacement(GetRoute(
         opaque: opaque ?? true,
         page: page,
@@ -173,10 +173,10 @@ class Get {
   /// It replaces Navigator.pushAndRemoveUntil, but needs no context
   static Future<T> offAll<T>(Widget page,
       {RoutePredicate predicate,
-      bool opaque = false,
-      bool popGesture,
-      int id,
-      Transition transition}) {
+        bool opaque = false,
+        bool popGesture,
+        int id,
+        Transition transition}) {
     var route = (Route<dynamic> rota) => false;
 
     return global(id).currentState.pushAndRemoveUntil(
@@ -190,8 +190,7 @@ class Get {
   }
 
   /// Show a dialog
-  static Future<T> dialog<T>(
-    Widget child, {
+  static Future<T> dialog<T>(Widget child, {
     bool barrierDismissible = true,
     bool useRootNavigator = true,
     RouteSettings routeSettings,
@@ -199,7 +198,7 @@ class Get {
     return showDialog(
       barrierDismissible: barrierDismissible,
       useRootNavigator: useRootNavigator,
-      routeSettings: routeSettings,
+      //  routeSettings: routeSettings,
       context: overlayContext,
       builder: (_) {
         return child;
@@ -207,11 +206,10 @@ class Get {
     );
   }
 
-  static Future<T> defaultDialog<T>(
-      {String title = "Alert dialog",
-      Widget content,
-      Widget cancel,
-      Widget confirm}) {
+  static Future<T> defaultDialog<T>({String title = "Alert dialog",
+    Widget content,
+    Widget cancel,
+    Widget confirm}) {
     return dialog(AlertDialog(
       title: Text(title, textAlign: TextAlign.center),
       content: content,
@@ -242,7 +240,8 @@ class Get {
       builder: builder,
       theme: Theme.of(Get.key.currentContext, shadowThemeOnly: true),
       isScrollControlled: isScrollControlled,
-      barrierLabel: MaterialLocalizations.of(Get.key.currentContext)
+      barrierLabel: MaterialLocalizations
+          .of(Get.key.currentContext)
           .modalBarrierDismissLabel,
       backgroundColor: backgroundColor ?? Colors.transparent,
       elevation: elevation,
@@ -258,41 +257,45 @@ class Get {
 
   static void snackbar(title, message,
       {Color colorText,
-      Duration duration,
-      SnackPosition snackPosition,
-      Widget titleText,
-      Widget messageText,
-      Widget icon,
-      bool shouldIconPulse,
-      double maxWidth,
-      EdgeInsets margin,
-      EdgeInsets padding,
-      double borderRadius,
-      Color borderColor,
-      double borderWidth,
-      Color backgroundColor,
-      Color leftBarIndicatorColor,
-      List<BoxShadow> boxShadows,
-      Gradient backgroundGradient,
-      FlatButton mainButton,
-      OnTap onTap,
-      bool isDismissible,
-      bool showProgressIndicator,
-      SnackDismissDirection dismissDirection,
-      AnimationController progressIndicatorController,
-      Color progressIndicatorBackgroundColor,
-      Animation<Color> progressIndicatorValueColor,
-      SnackStyle snackStyle,
-      Curve forwardAnimationCurve,
-      Curve reverseAnimationCurve,
-      Duration animationDuration,
-      double barBlur,
-      double overlayBlur,
-      Color overlayColor,
-      Form userInputForm}) {
+        Duration duration,
+        SnackPosition snackPosition,
+        Widget titleText,
+        Widget messageText,
+        double height,
+        Widget icon,
+        bool shouldIconPulse,
+        double maxWidth,
+        EdgeInsets margin,
+        EdgeInsets padding,
+        double borderRadius,
+        Color borderColor,
+        double borderWidth,
+        Color backgroundColor,
+        Color leftBarIndicatorColor,
+        List<BoxShadow> boxShadows,
+        Gradient backgroundGradient,
+        FlatButton mainButton,
+        OnTap onTap,
+        bool isDismissible,
+        bool showProgressIndicator,
+        SnackDismissDirection dismissDirection,
+        AnimationController progressIndicatorController,
+        Color progressIndicatorBackgroundColor,
+        Animation<Color> progressIndicatorValueColor,
+        SnackStyle snackStyle,
+        Curve forwardAnimationCurve,
+        Curve reverseAnimationCurve,
+        Duration animationDuration,
+        double barBlur,
+        double overlayBlur,
+        Color overlayColor,
+        Form userInputForm}) {
     SchedulerBinding.instance.addPostFrameCallback((_) {
-      final Color defaultColor = IconTheme.of(Get.key.currentContext).color;
+      final Color defaultColor = IconTheme
+          .of(Get.key.currentContext)
+          .color;
       return GetBar(
+          height: height,
           titleText: titleText ??
               Text(
                 title,
@@ -302,16 +305,16 @@ class Get {
                     fontSize: 16),
               ),
           messageText: messageText ??
-              Text(
+              (message == null ? null : Text(
                 message,
                 style: TextStyle(
                     color: colorText ?? defaultColor,
                     fontWeight: FontWeight.w300,
                     fontSize: 14),
-              ),
-          snackPosition: snackPosition ?? SnackPosition.TOP,
-          borderRadius: borderRadius ?? 15,
-          margin: margin ?? EdgeInsets.symmetric(horizontal: 10),
+              )),
+          snackPosition: snackPosition ?? SnackPosition.BOTTOM,
+          borderRadius: borderRadius ?? 0,
+          margin: margin ?? EdgeInsets.symmetric(horizontal: 0),
           duration: duration ?? Duration(seconds: 3),
           barBlur: barBlur ?? 7.0,
           backgroundColor: backgroundColor ?? Colors.grey.withOpacity(0.2),
@@ -344,13 +347,12 @@ class Get {
   }
 
   /// change default config of Get
-  static void config(
-      {bool enableLog,
-      bool defaultPopGesture,
-      bool defaultOpaqueRoute,
-      Duration defaultDurationTransition,
-      bool defaultGlobalState,
-      Transition defaultTransition}) {
+  static void config({bool enableLog,
+    bool defaultPopGesture,
+    bool defaultOpaqueRoute,
+    Duration defaultDurationTransition,
+    bool defaultGlobalState,
+    Transition defaultTransition}) {
     if (enableLog != null) {
       _enableLog = enableLog;
     }
@@ -499,13 +501,25 @@ class Get {
   static MediaQueryData get mediaquery => MediaQuery.of(context);
 
   /// give access to Theme.of(context).iconTheme.color
-  static Color get iconColor => Theme.of(context).iconTheme.color;
+  static Color get iconColor =>
+      Theme
+          .of(context)
+          .iconTheme
+          .color;
 
   /// give access to MediaQuery.of(context).size.height
-  static double get height => MediaQuery.of(context).size.height;
+  static double get height =>
+      MediaQuery
+          .of(context)
+          .size
+          .height;
 
   /// give access to MediaQuery.of(context).size.width
-  static double get width => MediaQuery.of(context).size.width;
+  static double get width =>
+      MediaQuery
+          .of(context)
+          .size
+          .width;
 }
 
 /// It replaces the Flutter Navigator, but needs no context.

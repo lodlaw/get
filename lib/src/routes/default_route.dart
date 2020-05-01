@@ -238,12 +238,9 @@ class GetRoute<T> extends PageRoute<T> {
     Transition transition = (tr ?? Get.defaultTransition);
 
     if (route.fullscreenDialog) {
-      final bool linearTransition = isPopGestureInProgress(route);
       return CupertinoFullscreenDialogTransition(
-        primaryRouteAnimation: animation,
-        secondaryRouteAnimation: secondaryAnimation,
+        animation: animation,
         child: child,
-        linearTransition: linearTransition,
       );
     } else {
       switch (transition) {

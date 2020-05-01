@@ -10,43 +10,43 @@ typedef void OnTap(GetBar snack);
 
 // ignore: must_be_immutable
 class GetBar<T extends Object> extends StatefulWidget {
-  GetBar(
-      {Key key,
-      String title,
-      String message,
-      Widget titleText,
-      Widget messageText,
-      Widget icon,
-      bool shouldIconPulse = true,
-      double maxWidth,
-      EdgeInsets margin = const EdgeInsets.all(0.0),
-      EdgeInsets padding = const EdgeInsets.all(16),
-      double borderRadius = 0.0,
-      Color borderColor,
-      double borderWidth = 1.0,
-      Color backgroundColor = const Color(0xFF303030),
-      Color leftBarIndicatorColor,
-      List<BoxShadow> boxShadows,
-      Gradient backgroundGradient,
-      FlatButton mainButton,
-      OnTap onTap,
-      Duration duration,
-      bool isDismissible = true,
-      SnackDismissDirection dismissDirection = SnackDismissDirection.VERTICAL,
-      bool showProgressIndicator = false,
-      AnimationController progressIndicatorController,
-      Color progressIndicatorBackgroundColor,
-      Animation<Color> progressIndicatorValueColor,
-      SnackPosition snackPosition = SnackPosition.BOTTOM,
-      SnackStyle snackStyle = SnackStyle.FLOATING,
-      Curve forwardAnimationCurve = Curves.easeOutCirc,
-      Curve reverseAnimationCurve = Curves.easeOutCirc,
-      Duration animationDuration = const Duration(seconds: 1),
-      SnackStatusCallback onStatusChanged,
-      double barBlur = 0.0,
-      double overlayBlur = 0.0,
-      Color overlayColor = Colors.transparent,
-      Form userInputForm})
+  GetBar({Key key,
+    String title,
+    String message,
+    Widget titleText,
+    Widget messageText,
+    Widget icon,
+    bool shouldIconPulse = true,
+    double maxWidth,
+    EdgeInsets margin = const EdgeInsets.all(0.0),
+    EdgeInsets padding = const EdgeInsets.all(16),
+    double borderRadius = 0.0,
+    Color borderColor,
+    double borderWidth = 1.0,
+    Color backgroundColor = const Color(0xFF303030),
+    Color leftBarIndicatorColor,
+    List<BoxShadow> boxShadows,
+    Gradient backgroundGradient,
+    FlatButton mainButton,
+    double height,
+    OnTap onTap,
+    Duration duration,
+    bool isDismissible = true,
+    SnackDismissDirection dismissDirection = SnackDismissDirection.VERTICAL,
+    bool showProgressIndicator = false,
+    AnimationController progressIndicatorController,
+    Color progressIndicatorBackgroundColor,
+    Animation<Color> progressIndicatorValueColor,
+    SnackPosition snackPosition = SnackPosition.BOTTOM,
+    SnackStyle snackStyle = SnackStyle.FLOATING,
+    Curve forwardAnimationCurve = Curves.easeOutCirc,
+    Curve reverseAnimationCurve = Curves.easeOutCirc,
+    Duration animationDuration = const Duration(seconds: 1),
+    SnackStatusCallback onStatusChanged,
+    double barBlur = 0.0,
+    double overlayBlur = 0.0,
+    Color overlayColor = Colors.transparent,
+    Form userInputForm})
       : this.title = title,
         this.message = message,
         this.titleText = titleText,
@@ -54,6 +54,7 @@ class GetBar<T extends Object> extends StatefulWidget {
         this.icon = icon,
         this.shouldIconPulse = shouldIconPulse,
         this.maxWidth = maxWidth,
+        this.height=height,
         this.margin = margin,
         this.padding = padding,
         this.borderRadius = borderRadius,
@@ -103,6 +104,8 @@ class GetBar<T extends Object> extends StatefulWidget {
 
   /// Will be ignored if [backgroundGradient] is not null
   final Color backgroundColor;
+
+  final double height;
 
   /// If not null, shows a left vertical colored bar on notification.
   /// It is not possible to use it with a [Form] and I do not recommend using it with [LinearProgressIndicator]
@@ -279,12 +282,6 @@ class _GetBarState<K extends Object> extends State<GetBar>
   void initState() {
     super.initState();
 
-    assert(
-        ((widget.userInputForm != null ||
-            ((widget.message != null && widget.message.isNotEmpty) ||
-                widget.messageText != null))),
-        "A message is mandatory if you are not using userInputForm. Set either a message or messageText");
-
     _isTitlePresent = (widget.title != null || widget.titleText != null);
     _messageTopMargin = _isTitlePresent ? 6.0 : widget.padding.top;
 
@@ -316,7 +313,7 @@ class _GetBarState<K extends Object> extends State<GetBar>
 
   void _configureLeftBarFuture() {
     SchedulerBinding.instance.addPostFrameCallback(
-      (_) {
+          (_) {
         final keyContext = backgroundBoxKey.currentContext;
 
         if (keyContext != null) {
@@ -375,8 +372,14 @@ class _GetBarState<K extends Object> extends State<GetBar>
         child: SafeArea(
           minimum: widget.snackPosition == SnackPosition.BOTTOM
               ? EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom)
-              : EdgeInsets.only(top: MediaQuery.of(context).viewInsets.top),
+              bottom: MediaQuery
+                  .of(context)
+                  .viewInsets
+                  .bottom)
+              : EdgeInsets.only(top: MediaQuery
+              .of(context)
+              .viewInsets
+              .top),
           bottom: widget.snackPosition == SnackPosition.BOTTOM,
           top: widget.snackPosition == SnackPosition.TOP,
           left: false,
@@ -409,7 +412,7 @@ class _GetBarState<K extends Object> extends State<GetBar>
                       sigmaX: widget.barBlur, sigmaY: widget.barBlur),
                   child: Container(
                     height: snapshot.data.height,
-                    width: snapshot.data.width,
+                    width: double.infinity,
                     decoration: BoxDecoration(
                       color: Colors.transparent,
                       borderRadius: BorderRadius.circular(widget.borderRadius),
@@ -458,11 +461,13 @@ class _GetBarState<K extends Object> extends State<GetBar>
   GlobalKey backgroundBoxKey = GlobalKey();
 
   Widget _generateSnack() {
-    return Container(
+    final child = Container(
       key: backgroundBoxKey,
       constraints: widget.maxWidth != null
           ? BoxConstraints(maxWidth: widget.maxWidth)
           : null,
+      padding: EdgeInsets.only(bottom: widget.messageText == null ? 16.0 : 0),
+      width: double.infinity,
       decoration: BoxDecoration(
         color: widget.backgroundColor,
         gradient: widget.backgroundGradient,
@@ -477,12 +482,12 @@ class _GetBarState<K extends Object> extends State<GetBar>
         children: [
           widget.showProgressIndicator
               ? LinearProgressIndicator(
-                  value: widget.progressIndicatorController != null
-                      ? _progressAnimation.value
-                      : null,
-                  backgroundColor: widget.progressIndicatorBackgroundColor,
-                  valueColor: widget.progressIndicatorValueColor,
-                )
+            value: widget.progressIndicatorController != null
+                ? _progressAnimation.value
+                : null,
+            backgroundColor: widget.progressIndicatorBackgroundColor,
+            valueColor: widget.progressIndicatorValueColor,
+          )
               : _emptyWidget,
           Row(
             mainAxisSize: MainAxisSize.max,
@@ -491,6 +496,11 @@ class _GetBarState<K extends Object> extends State<GetBar>
         ],
       ),
     );
+    if (widget.height != null) {
+      return ConstrainedBox(
+          constraints: BoxConstraints(minHeight: widget.height), child: child);
+    }
+    return child;
   }
 
   List<Widget> _getAppropriateRowLayout() {
@@ -517,23 +527,24 @@ class _GetBarState<K extends Object> extends State<GetBar>
             children: <Widget>[
               (_isTitlePresent)
                   ? Padding(
-                      padding: EdgeInsets.only(
-                        top: widget.padding.top,
-                        left: widget.padding.left,
-                        right: widget.padding.right,
-                      ),
-                      child: _getTitleText(),
-                    )
-                  : _emptyWidget,
-              Padding(
                 padding: EdgeInsets.only(
-                  top: _messageTopMargin,
+                  top: widget.padding.top,
                   left: widget.padding.left,
                   right: widget.padding.right,
-                  bottom: widget.padding.bottom,
                 ),
-                child: widget.messageText ?? _getDefaultNotificationText(),
-              ),
+                child: _getTitleText(),
+              )
+                  : _emptyWidget,
+              if (widget.messageText != null)
+                Padding(
+                    padding: EdgeInsets.only(
+                      top: _messageTopMargin,
+                      left: widget.padding.left,
+                      right: widget.padding.right,
+                      bottom: widget.padding.bottom,
+                    ),
+                    child: widget.messageText
+                ),
             ],
           ),
         ),
@@ -553,23 +564,24 @@ class _GetBarState<K extends Object> extends State<GetBar>
             children: <Widget>[
               (_isTitlePresent)
                   ? Padding(
-                      padding: EdgeInsets.only(
-                        top: widget.padding.top,
-                        left: 4.0,
-                        right: widget.padding.left,
-                      ),
-                      child: _getTitleText(),
-                    )
-                  : _emptyWidget,
-              Padding(
                 padding: EdgeInsets.only(
-                  top: _messageTopMargin,
+                  top: widget.padding.top,
                   left: 4.0,
-                  right: widget.padding.right,
-                  bottom: widget.padding.bottom,
+                  right: widget.padding.left,
                 ),
-                child: widget.messageText ?? _getDefaultNotificationText(),
-              ),
+                child: _getTitleText(),
+              )
+                  : _emptyWidget,
+              if (widget.messageText != null)
+                Padding(
+                    padding: EdgeInsets.only(
+                      top: _messageTopMargin,
+                      left: 4.0,
+                      right: widget.padding.right,
+                      bottom: widget.padding.bottom,
+                    ),
+                    child: widget.messageText
+                ),
             ],
           ),
         ),
@@ -585,23 +597,24 @@ class _GetBarState<K extends Object> extends State<GetBar>
             children: <Widget>[
               (_isTitlePresent)
                   ? Padding(
-                      padding: EdgeInsets.only(
-                        top: widget.padding.top,
-                        left: widget.padding.left,
-                        right: widget.padding.right,
-                      ),
-                      child: _getTitleText(),
-                    )
-                  : _emptyWidget,
-              Padding(
                 padding: EdgeInsets.only(
-                  top: _messageTopMargin,
+                  top: widget.padding.top,
                   left: widget.padding.left,
-                  right: 8.0,
-                  bottom: widget.padding.bottom,
+                  right: widget.padding.right,
                 ),
-                child: widget.messageText ?? _getDefaultNotificationText(),
-              ),
+                child: _getTitleText(),
+              )
+                  : _emptyWidget,
+              if (widget.messageText != null)
+                Padding(
+                    padding: EdgeInsets.only(
+                      top: _messageTopMargin,
+                      left: widget.padding.left,
+                      right: 8.0,
+                      bottom: widget.padding.bottom,
+                    ),
+                    child: widget.messageText
+                ),
             ],
           ),
         ),
@@ -625,30 +638,31 @@ class _GetBarState<K extends Object> extends State<GetBar>
             children: <Widget>[
               (_isTitlePresent)
                   ? Padding(
-                      padding: EdgeInsets.only(
-                        top: widget.padding.top,
-                        left: 4.0,
-                        right: 8.0,
-                      ),
-                      child: _getTitleText(),
-                    )
-                  : _emptyWidget,
-              Padding(
                 padding: EdgeInsets.only(
-                  top: _messageTopMargin,
+                  top: widget.padding.top,
                   left: 4.0,
                   right: 8.0,
-                  bottom: widget.padding.bottom,
                 ),
-                child: widget.messageText ?? _getDefaultNotificationText(),
-              ),
+                child: _getTitleText(),
+              )
+                  : _emptyWidget,
+              if (widget.messageText != null)
+                Padding(
+                    padding: EdgeInsets.only(
+                      top: _messageTopMargin,
+                      left: 4.0,
+                      right: 8.0,
+                      bottom: widget.padding.bottom,
+                    ),
+                    child: widget.messageText
+                ),
             ],
           ),
         ),
         Padding(
-              padding: EdgeInsets.only(right: buttonRightPadding),
-              child: _getMainActionButton(),
-            ) ??
+          padding: EdgeInsets.only(right: buttonRightPadding),
+          child: _getMainActionButton(),
+        ) ??
             _emptyWidget,
       ];
     }
@@ -692,20 +706,14 @@ class _GetBarState<K extends Object> extends State<GetBar>
     return widget.titleText != null
         ? widget.titleText
         : Text(
-            widget.title ?? "",
-            style: TextStyle(
-                fontSize: 16.0,
-                color: Colors.white,
-                fontWeight: FontWeight.bold),
-          );
-  }
-
-  Text _getDefaultNotificationText() {
-    return Text(
-      widget.message ?? "",
-      style: TextStyle(fontSize: 14.0, color: Colors.white),
+      widget.title ?? "",
+      style: TextStyle(
+          fontSize: 16.0,
+          color: Colors.white,
+          fontWeight: FontWeight.bold),
     );
   }
+
 
   FlatButton _getMainActionButton() {
     if (widget.mainButton != null) {

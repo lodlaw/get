@@ -10,7 +10,7 @@ class GetMaterialApp extends StatefulWidget {
     this.routes = const <String, WidgetBuilder>{},
     this.initialRoute,
     this.onGenerateRoute,
-    this.onGenerateInitialRoutes,
+    // this.onGenerateInitialRoutes,
     this.onUnknownRoute,
     this.navigatorObservers = const <NavigatorObserver>[],
     this.builder,
@@ -58,7 +58,7 @@ class GetMaterialApp extends StatefulWidget {
   final Map<String, WidgetBuilder> routes;
   final String initialRoute;
   final RouteFactory onGenerateRoute;
-  final InitialRouteListFactory onGenerateInitialRoutes;
+  // final InitialRouteListFactory onGenerateInitialRoutes;
   final RouteFactory onUnknownRoute;
   final List<NavigatorObserver> navigatorObservers;
   final TransitionBuilder builder;
@@ -169,7 +169,7 @@ class _GetMaterialAppState extends State<GetMaterialApp> {
       onGenerateRoute: (widget.namedRoutes == null
           ? widget.onGenerateRoute
           : namedRoutesGenerate),
-      onGenerateInitialRoutes: widget.onGenerateInitialRoutes,
+      //   onGenerateInitialRoutes: widget.onGenerateInitialRoutes,
       onUnknownRoute: widget.onUnknownRoute,
       navigatorObservers: (widget.navigatorObservers == null
           ? <NavigatorObserver>[GetObserver(widget.routingCallback)]
@@ -195,8 +195,8 @@ class _GetMaterialAppState extends State<GetMaterialApp> {
       checkerboardOffscreenLayers: widget.checkerboardOffscreenLayers ?? false,
       showSemanticsDebugger: widget.showSemanticsDebugger ?? false,
       debugShowCheckedModeBanner: widget.debugShowCheckedModeBanner ?? true,
-      shortcuts: widget.shortcuts,
-      actions: widget.actions,
+      //  shortcuts: widget.shortcuts,
+      //  actions: widget.actions,
     );
   }
 }
