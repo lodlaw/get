@@ -363,7 +363,7 @@ class _GetBarState<K extends Object> extends State<GetBar>
 
   @override
   Widget build(BuildContext context) {
-    return Align(
+    final child = Align(
       heightFactor: 1.0,
       child: Material(
         color: widget.snackStyle == SnackStyle.FLOATING
@@ -388,6 +388,7 @@ class _GetBarState<K extends Object> extends State<GetBar>
         ),
       ),
     );
+    return child;
   }
 
   Widget _getSnack() {
@@ -447,7 +448,7 @@ class _GetBarState<K extends Object> extends State<GetBar>
       ),
       child: Padding(
         padding: const EdgeInsets.only(
-            left: 8.0, right: 8.0, bottom: 8.0, top: 16.0),
+            left: 8.0, right: 8.0, bottom: 8.0),
         child: FocusScope(
           child: widget.userInputForm,
           node: _focusNode,
@@ -466,7 +467,7 @@ class _GetBarState<K extends Object> extends State<GetBar>
       constraints: widget.maxWidth != null
           ? BoxConstraints(maxWidth: widget.maxWidth)
           : null,
-      padding: EdgeInsets.only(bottom: widget.messageText == null ? 16.0 : 0),
+      padding: EdgeInsets.only(bottom: 0),
       width: double.infinity,
       decoration: BoxDecoration(
         color: widget.backgroundColor,
@@ -528,7 +529,7 @@ class _GetBarState<K extends Object> extends State<GetBar>
               (_isTitlePresent)
                   ? Padding(
                 padding: EdgeInsets.only(
-                  top: widget.padding.top,
+                  top: 0,
                   left: widget.padding.left,
                   right: widget.padding.right,
                 ),
