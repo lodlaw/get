@@ -193,12 +193,12 @@ class Get {
   static Future<T> dialog<T>(Widget child, {
     bool barrierDismissible = true,
     bool useRootNavigator = true,
-    RouteSettings routeSettings,
+    //  RouteSettings routeSettings
   }) {
     return showDialog(
       barrierDismissible: barrierDismissible,
       useRootNavigator: useRootNavigator,
-      //  routeSettings: routeSettings,
+      routeSettings: RouteSettings(name: 'dialog'),
       context: overlayContext,
       builder: (_) {
         return child;
@@ -206,10 +206,36 @@ class Get {
     );
   }
 
-  static Future<T> defaultDialog<T>({String title = "Alert dialog",
-    Widget content,
-    Widget cancel,
-    Widget confirm}) {
+  /// Api from showGeneralDialog with no context
+  static Future<T> generalDialog<T>({
+    @required RoutePageBuilder pageBuilder,
+    bool barrierDismissible,
+    String barrierLabel,
+    Color barrierColor,
+    Duration transitionDuration,
+    RouteTransitionsBuilder transitionBuilder,
+    bool useRootNavigator = true,
+    RouteSettings routeSettings,
+    //  RouteSettings routeSettings
+  }) {
+    return showGeneralDialog(
+      pageBuilder: pageBuilder,
+      barrierDismissible: barrierDismissible,
+      barrierLabel: barrierLabel,
+      barrierColor: barrierColor,
+      transitionDuration: transitionDuration,
+      transitionBuilder: transitionBuilder,
+      useRootNavigator: useRootNavigator,
+      routeSettings: RouteSettings(name: 'dialog'),
+      context: overlayContext,
+    );
+  }
+
+  static Future<T> defaultDialog<T>(
+      {String title = "Alert dialog",
+      Widget content,
+      Widget cancel,
+      Widget confirm}) {
     return dialog(AlertDialog(
       title: Text(title, textAlign: TextAlign.center),
       content: content,
@@ -217,8 +243,8 @@ class Get {
     ));
   }
 
-  static Future<T> bottomSheet<T>({
-    @required WidgetBuilder builder,
+  static Future<T> bottomSheet<T>(
+    Widget bottomsheet, {
     Color backgroundColor,
     double elevation,
     ShapeBorder shape,
@@ -230,14 +256,14 @@ class Get {
     bool isDismissible = true,
     bool enableDrag = true,
   }) {
-    assert(builder != null);
+    assert(bottomsheet != null);
     assert(isScrollControlled != null);
     assert(useRootNavigator != null);
     assert(isDismissible != null);
     assert(enableDrag != null);
 
     return navigator.push<T>(GetModalBottomSheetRoute<T>(
-      builder: builder,
+      builder: (_) => bottomsheet,
       theme: Theme.of(Get.key.currentContext, shadowThemeOnly: true),
       isScrollControlled: isScrollControlled,
       barrierLabel: MaterialLocalizations
@@ -401,10 +427,16 @@ class Get {
     return _singl[T];
   }
 
+  static bool reset() {
+    _singl.clear();
+    return true;
+  }
+
   /// Delete a singleton instance of your class
   static bool delete<T>(T singleton) {
     if (!_singl.containsKey(T)) {
-      throw 'key id not found';
+      print('key id not found');
+      return false;
     }
     _singl.removeWhere((oldkey, value) => (oldkey == T));
     return true;
